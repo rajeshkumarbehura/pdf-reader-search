@@ -3,8 +3,9 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores.pgvector import PGVector
 
+from secret_key import openai_key  # only for personal secret key
+
 import os
-from secret_key import openai_key
 
 os.environ['OPENAI_API_KEY'] = openai_key  # add your own OpenAI key
 
@@ -42,8 +43,24 @@ def embeddings_from_documents(docs):
     )
 
 
+def query_result():
+    embeddings = OpenAIEmbeddings()
+    query = "What is Incrementing and Decrementing ?"
+    # load the store
+    pgvector_docsearch = PGVector(
+        collection_name=COLLECTION_NAME,
+        connection_string=CONNECTION_STRING,
+        embedding_function=embeddings,
+    )
+    searched_docs = pgvector_docsearch.search(query, 'mmr', k=1)
+    result = searched_docs[0].page_content
+    print(result)
+
+
 if __name__ == '__main__':
     print("Hello")
-    split_texts = pdf_content_into_documents()
-    embeddings_from_documents(split_texts)
+    # split_texts = pdf_content_into_documents()
+    # embeddings_from_documents(split_texts)
+
+    query_result()
     print("Done")
