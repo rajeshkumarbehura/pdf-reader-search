@@ -43,24 +43,30 @@ def embeddings_from_documents(docs):
     )
 
 
-def query_result():
+def load_pdf_into_db():
+    docs = pdf_content_into_documents()
+    embeddings_from_documents(docs)
+
+
+def ask_question(query):
     embeddings = OpenAIEmbeddings()
-    query = "What is Incrementing and Decrementing ?"
-    # load the store
+    # load the store for searching
     pgvector_docsearch = PGVector(
         collection_name=COLLECTION_NAME,
         connection_string=CONNECTION_STRING,
         embedding_function=embeddings,
     )
     searched_docs = pgvector_docsearch.search(query, 'mmr', k=1)
+    # searched_docs = pgvector_docsearch.similarity_search(query, k=4)
     result = searched_docs[0].page_content
     print(result)
 
 
 if __name__ == '__main__':
-    print("Hello")
-    # split_texts = pdf_content_into_documents()
-    # embeddings_from_documents(split_texts)
+    print("Uploading pdf started.")
+    load_pdf_into_db()
 
-    query_result()
-    print("Done")
+    print("Searching based on query.")
+    ask_question(query="What is Incrementing and Decrementing ?")
+
+    print("Processing done")

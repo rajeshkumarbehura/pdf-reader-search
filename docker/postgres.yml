@@ -1,0 +1,14 @@
+version: "3"
+services:
+  db:
+    hostname: db
+    image: ankane/pgvector
+    container_name: vectordb
+    ports:
+     - 6432:5432
+    restart: always
+    environment:
+      - POSTGRES_DB=vectordb
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpwd
+      - POSTGRES_HOST_AUTH_METHOD=trust
